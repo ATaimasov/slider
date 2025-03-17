@@ -1,0 +1,121 @@
+@use "../global" as *;
+
+.slider {
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  grid-template-rows: 1fr auto;
+  max-width: 800px;
+  width: 100%;
+  gap: 16px;
+}
+
+.slider__slides {
+  position: relative;
+}
+
+.slider__slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 400px;
+  opacity: 0;
+  transition: opacity $animation-duration $animation;
+
+  &:first-child {
+    position: relative;
+    opacity: 1;
+  }
+}
+
+.slider__slide--active {
+  position: relative;
+  opacity: 1;
+}
+
+.slider__controls {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  width: 100%;
+
+  &:has(.slider__arrow) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .slider__controls:has(> .slider__bullets):has(> .slider__arrow) {
+    grid-template-columns: auto 1fr auto;
+  }
+}
+
+.slider__arrow {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  background-color: $color-bg--btn;
+  border: none;
+  border-radius: 50%;
+
+  &::after {
+    content: "b";
+    position: absolute;
+    top: 33%;
+    width: 40%;
+    height: 40%;
+    color: transparent;
+    transform: rotate(135deg) translateY(50%) translateX(50%);
+    border-width: 0;
+    border-style: solid;
+    border-color: $color-main--text;
+  }
+}
+
+.slider__arrow--left {
+  justify-self: end;
+  &::after {
+    left: 65%;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+  }
+}
+
+.slider__arrow--right {
+  justify-self: start;
+  &::after {
+    left: 50%;
+    border-left-width: 2px;
+    border-top-width: 2px;
+  }
+}
+
+.slider__arrow--disabled {
+  opacity: 0.5;
+}
+
+.slider__bullets {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.slider__bullet {
+  width: 10px;
+  height: 10px;
+  background-color: $color-main--text;
+  border-radius: 50%;
+}
+
+.slider__bullet--active {
+  background-color: $color-main;
+}
+
+.slider__title {
+  font-family: $font-family--h2;
+  font-size: $font-size--h2;
+  font-weight: $font-weight--h2;
+  line-height: $line-height--h2;
+  text-align: center;
+}
