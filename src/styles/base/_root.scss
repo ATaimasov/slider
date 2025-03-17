@@ -1,0 +1,220 @@
+// abstracts
+@use "../global" as *;
+@use "sass:color";
+
+// root styles
+@use "./fonts";
+@use "./reset";
+@use "./animation";
+
+//fix "jumping" content when the scrollbar appears or is hidden.
+// .html, .body {
+//   scrollbar-gutter: stable;
+// }
+
+.html {
+  font-size: $font-size--root;
+  font-family: $font-family;
+  color: $color-main--text;
+  scrollbar-color: hex-to-rgba($color-main, 0.9)
+    color.adjust(white, $lightness: -10%);
+  scrollbar-width: thin;
+  scroll-padding-top: 5%;
+  // appearance: none;
+
+  /* exception for non smooth scrolling settings */
+  @media (prefers-reduced-motion: no-preference) {
+    scroll-behavior: smooth;
+  }
+}
+
+::selection {
+  background: color.adjust($color-main, $lightness: -20%);
+  text-shadow: none;
+  color: $color-main--text;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: $font-size;
+  line-height: $line-height;
+}
+
+.footer,
+.header,
+.main {
+  width: 100%;
+  background-color: transparent; //? set your colors
+}
+
+.main {
+  flex-grow: 1; // fill the remaining space
+}
+
+.header,
+.footer {
+  display: flex;
+  align-items: center;
+
+  //! delete or change
+  padding: rem(20px);
+  @media screen and (min-width: $screen-md) {
+    padding: rem(30px);
+  }
+  @media screen and (min-width: $screen-xl) {
+    padding: rem(40px);
+  }
+}
+
+.header,
+.header__container {
+  justify-content: center;
+  flex-direction: column;
+
+  @media screen and (min-width: $screen-sm) {
+    justify-content: space-between;
+    flex-direction: row;
+  }
+}
+
+.header__container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  //! delete or change
+  row-gap: rem(20px);
+}
+
+.footer {
+  justify-content: center;
+}
+
+//! delete or change
+.footer__text-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: rem(5px);
+}
+
+//! delete or change
+.footer__text {
+  font-size: rem(13px);
+  line-height: 1.3em;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+
+  // justify-content: center; // centering one content in the middle of the page
+}
+
+.main__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+
+  //! delete or change
+  padding: 0 rem(10px);
+
+  @media screen and (min-width: $screen-md) {
+    padding: 0 rem(30px);
+  }
+}
+
+.section__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  //! delete or change
+  gap: rem(30px);
+  max-width: rem(1200px);
+  width: 100%;
+}
+
+.section__title {
+  font-family: $font-family--h1;
+  font-size: $font-size--h1;
+  font-weight: $font-weight--h1;
+  line-height: $line-height--h1;
+
+  //! delete or change
+  text-transform: uppercase;
+}
+
+.section__subtitle {
+  font-family: $font-family--h2;
+  font-size: $font-size--h2;
+  font-weight: $font-weight--h2;
+  line-height: $line-height--h2;
+}
+
+.img {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.logo {
+  line-height: 0;
+  color: inherit;
+  user-select: none;
+}
+
+.link {
+  text-decoration: none;
+  cursor: pointer;
+
+  //! delete or change
+  color: inherit;
+  @include event-opacity;
+}
+
+.btn {
+  font-family: $font-family--btn;
+  font-size: $font-size--btn;
+  font-weight: $font-weight--btn;
+  line-height: $line-height--btn;
+
+  user-select: none;
+  cursor: pointer;
+
+  //! delete or change
+  text-transform: uppercase;
+  color: inherit;
+  border: none;
+  border-radius: rem(10px);
+  @include event-opacity;
+}
+
+.icon {
+  fill: currentColor;
+  //! delete or change
+  // transition: fill $animation-duration $animation;
+}
+
+.icon__arrow-right {
+  width: 5px;
+  height: 5px;
+  border-left: 1.5px solid;
+  border-bottom: 1.5px solid;
+  transform: rotate(-135deg);
+  transition: transform $animation-duration $animation;
+}
