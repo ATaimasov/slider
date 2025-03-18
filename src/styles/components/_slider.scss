@@ -9,9 +9,9 @@
   justify-items: center;
   align-items: center;
   grid-template-rows: 1fr auto;
-  max-width: 800px;
+  max-width: 500px;
   width: 100%;
-  gap: 16px;
+  gap: 30px;
 }
 
 .slider__slides {
@@ -54,7 +54,7 @@
   }
 
   &:has(> .slider__bullets):has(> .slider__arrow) {
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 20% 1fr 20%;
   }
 }
 
