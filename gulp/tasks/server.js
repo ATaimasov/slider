@@ -6,6 +6,7 @@ export const server = (done) => {
     },
     notify: false,
     port: 5000,
+    open: false, // Отключаем автоматическое открытие в браузере
   });
 
   done();

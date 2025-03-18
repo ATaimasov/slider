@@ -1,18 +1,15 @@
 const SLIDES = [
   {
-    id: 1,
     title: "Slide 1",
     text: "Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text.",
   },
   {
-    id: 2,
     title: "Slide 2",
     text: "Slide 2 text",
   },
   {
-    id: 3,
     title: "Slide 3",
-    text: "Slide 3 text",
+    text: "Slide 3 text lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Slide 3 text lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
   },
 ];
 
@@ -30,33 +27,22 @@ export class Slider {
       );
     }
 
+    // data
+    this.currentSlideIndex = 0;
+    this.slidesData = SLIDES;
+
     this.additionalClass = options.additionalClass || "";
-    this.infinity = options.infinity !== undefined ? options.infinity : false;
-    this.arrows = options.arrows !== undefined ? options.arrows : true;
-    this.bullets = options.bullets !== undefined ? options.bullets : true;
-    this.autoSlide =
-      options.autoSlide !== undefined ? options.autoSlide : false;
     this.autoSlideInterval = options.autoSlideInterval || 3000;
 
-    this.templates = {
-      slide: (slide) => `
-        <li class="slider__slide" data-id=${slide.id}>
-          <h2 class="slider__title">${slide.title}</h2>
-          <p class="slider__text">${slide.text}</p>
-        </li>
-      `,
-      arrows: (value) => {
-        if (value === "left")
-          return `<button class="arrow arrow-left"></button>`;
-        if (value === "right")
-          return `<button class="arrow arrow-right"></button>`;
-        return "";
-      },
-      bullet: (bullet) => `
-      <button class="bullet" data-bullets-id:"${bullet.id}"></button>
-      `,
-      pagination: `<ul class="slider__pagination"></ul>`,
-    };
+    // booleans
+    this.hasInfinity =
+      options.hasInfinity !== undefined ? options.hasInfinity : false;
+    this.hasArrows = options.hasArrows !== undefined ? options.hasArrows : true;
+    this.hasBullets =
+      options.hasBullets !== undefined ? options.hasBullets : true;
+    this.hasAutoSlide =
+      options.hasAutoSlide !== undefined ? options.hasAutoSlide : false;
+    this.isLoop = options.isLoop !== undefined ? options.isLoop : false;
 
     this.init();
   }
@@ -77,14 +63,15 @@ export class Slider {
   }
 
   generateSlider() {
-    const slides = document.createElement("ul");
-    slides.classList.add("slider__slides");
-    this.sliderContainer.appendChild(slides);
+    this.slidesContainer = document.createElement("ul");
+    this.slidesContainer.classList.add("slider__slides");
+    this.sliderContainer.appendChild(this.slidesContainer);
 
-    slides.innerHTML = this.generateSlides(SLIDES);
+    this.slidesContainer.innerHTML = this.generateSlides(this.slidesData);
+    this.slides = this.sliderContainer.querySelectorAll(".slider__slide");
+    this.slides[this.currentSlideIndex].classList.add("slider__slide--active");
 
     this.generateControl();
-    this.makeInfinitySlider();
     this.makeAutoSlide();
   }
 
@@ -94,51 +81,153 @@ export class Slider {
       return "";
     }
 
-    return SLIDES.map((slide) => {
-      return this.templates.slide(slide);
+    return SLIDES.map((slide, index) => {
+      return `
+        <li class="slider__slide" data-slide-index=${index}>
+          <h2 class="slider__title">${slide.title}</h2>
+          <p class="slider__text">${slide.text}</p>
+        </li>
+      `;
     }).join("");
   }
 
   generateControl() {
-    if (this.arrows || this.bullets) {
-      const controls = document.createElement("div");
-      controls.classList.add("slider__controls");
-      this.sliderContainer.appendChild(controls);
+    if (this.hasArrows || this.hasBullets) {
+      this.controlsContainer = document.createElement("div");
+      this.controlsContainer.classList.add("slider__controls");
+      this.sliderContainer.appendChild(this.controlsContainer);
     }
     this.generateBullets();
     this.generateArrows();
   }
 
   generateArrows() {
-    if (!this.arrows) return;
+    if (!this.hasArrows) return;
 
-    const controls = this.sliderContainer.querySelector(".slider__controls");
-
-    const leftButton = document.createElement("button");
-    leftButton.classList.add("btn", "slider__arrow", "slider__arrow--left");
-
-    const rightButton = document.createElement("button");
-    rightButton.classList.add("btn", "slider__arrow", "slider__arrow--right");
-
-    if (this.bullets) {
-      const bullets = controls.querySelector(".slider__bullets");
-      controls.insertBefore(leftButton, bullets);
-      controls.insertBefore(rightButton, bullets.nextSibling);
-    } else {
-      controls.appendChild(leftButton);
-      controls.appendChild(rightButton);
+    this.leftArrow = document.createElement("button");
+    this.leftArrow.classList.add("btn", "slider__arrow", "slider__arrow--left");
+    if (!this.isLoop) {
+      this.leftArrow.classList.add("slider__arrow--disabled");
     }
+
+    this.rightArrow = document.createElement("button");
+    this.rightArrow.classList.add(
+      "btn",
+      "slider__arrow",
+      "slider__arrow--right",
+    );
+
+    if (this.hasBullets) {
+      this.controlsContainer.insertBefore(
+        this.leftArrow,
+        this.bulletsContainer,
+      );
+      this.controlsContainer.insertBefore(
+        this.rightArrow,
+        this.bulletsContainer.nextSibling,
+      );
+    } else {
+      this.controlsContainer.appendChild(this.leftArrow);
+      this.controlsContainer.appendChild(this.rightArrow);
+    }
+
+    this.leftArrow.addEventListener("click", () => {
+      if (this.isLoop) {
+        this.goToSlide(
+          (this.currentSlideIndex - 1 + this.slidesData.length) %
+            this.slidesData.length,
+        );
+      } else {
+        this.goToSlide(Math.max(this.currentSlideIndex - 1, 0));
+      }
+    });
+
+    this.rightArrow.addEventListener("click", () => {
+      if (this.isLoop) {
+        this.goToSlide((this.currentSlideIndex + 1) % this.slidesData.length);
+      } else {
+        this.goToSlide(
+          Math.min(this.currentSlideIndex + 1, this.slidesData.length - 1),
+        );
+      }
+    });
   }
 
   generateBullets() {
-    if (!this.bullets) return;
+    if (!this.hasBullets) return;
+
+    this.bulletsContainer = document.createElement("div");
+    this.bulletsContainer.classList.add("slider__bullets");
+    this.controlsContainer.appendChild(this.bulletsContainer);
+
+    this.slidesData.forEach((slide, index) => {
+      const bullet = document.createElement("button");
+      bullet.classList.add("slider__bullet");
+      bullet.setAttribute("data-slide-index", index);
+
+      if (index === 0) {
+        bullet.classList.add("slider__bullet--active");
+      }
+
+      bullet.addEventListener("click", () => {
+        this.goToSlide(index);
+      });
+
+      this.bulletsContainer.appendChild(bullet);
+    });
+
+    this.bulletElements =
+      this.sliderContainer.querySelectorAll(".slider__bullet");
+  }
+
+  goToSlide(index) {
+    this.currentSlideIndex = index;
+
+    this.slides.forEach((slide) => {
+      slide.classList.remove("slider__slide--active");
+    });
+    this.slides[this.currentSlideIndex].classList.add("slider__slide--active");
+
+    this.updateActiveBullet(index);
+    this.updateArrows();
+  }
+
+  updateActiveBullet(activeIndex) {
+    if (!this.hasBullets || !this.bulletElements) return;
+
+    this.bulletElements.forEach((bullet) => {
+      bullet.classList.remove("slider__bullet--active");
+    });
+
+    this.bulletElements[activeIndex].classList.add("slider__bullet--active");
+  }
+
+  updateArrows() {
+    if (!this.hasArrows || this.isLoop) return;
+
+    this.leftArrow.classList.toggle(
+      "slider__arrow--disabled",
+      this.currentSlideIndex === 0,
+    );
+    this.rightArrow.classList.toggle(
+      "slider__arrow--disabled",
+      this.currentSlideIndex === this.slidesData.length - 1,
+    );
   }
 
   makeAutoSlide() {
-    if (!this.autoSlide) return;
-  }
+    if (!this.hasAutoSlide) return;
 
-  makeInfinitySlider() {
-    if (!this.infinity) return;
+    if (this.isLoop) {
+      this.autoSlideIntervalId = setInterval(() => {
+        this.goToSlide((this.currentSlideIndex + 1) % this.slidesData.length);
+      }, this.autoSlideInterval);
+    } else {
+      this.autoSlideIntervalId = setInterval(() => {
+        this.goToSlide(
+          Math.min(this.currentSlideIndex + 1, this.slidesData.length - 1),
+        );
+      }, this.autoSlideInterval);
+    }
   }
 }
