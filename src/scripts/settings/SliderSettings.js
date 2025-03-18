@@ -5,5 +5,6 @@ const testSlider = new Slider({
   isLoop: true,
   hasInfinity: false,
   hasAutoSlide: true,
+  shouldInterruptAutoSlide: false,
   autoSlideInterval: 5000,
 });

@@ -1,17 +1,4 @@
-const SLIDES = [
-  {
-    title: "Slide 1",
-    text: "Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text. Slide 1 text.",
-  },
-  {
-    title: "Slide 2",
-    text: "Slide 2 text",
-  },
-  {
-    title: "Slide 3",
-    text: "Slide 3 text lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Slide 3 text lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-  },
-];
+import { SLIDES } from "../data/SLIDES.js";
 
 export class Slider {
   constructor(options) {
@@ -35,14 +22,16 @@ export class Slider {
     this.autoSlideInterval = options.autoSlideInterval || 3000;
 
     // booleans
-    this.hasInfinity =
-      options.hasInfinity !== undefined ? options.hasInfinity : false;
     this.hasArrows = options.hasArrows !== undefined ? options.hasArrows : true;
     this.hasBullets =
       options.hasBullets !== undefined ? options.hasBullets : true;
+    this.isLoop = options.isLoop !== undefined ? options.isLoop : false;
     this.hasAutoSlide =
       options.hasAutoSlide !== undefined ? options.hasAutoSlide : false;
-    this.isLoop = options.isLoop !== undefined ? options.isLoop : false;
+    this.shouldInterruptAutoSlide =
+      options.shouldInterruptAutoSlide !== undefined
+        ? options.shouldInterruptAutoSlide
+        : true;
 
     this.init();
   }
@@ -140,6 +129,10 @@ export class Slider {
       } else {
         this.goToSlide(Math.max(this.currentSlideIndex - 1, 0));
       }
+
+      if (this.shouldInterruptAutoSlide) {
+        this.destroyAutoSlide();
+      }
     });
 
     this.rightArrow.addEventListener("click", () => {
@@ -149,6 +142,10 @@ export class Slider {
         this.goToSlide(
           Math.min(this.currentSlideIndex + 1, this.slidesData.length - 1),
         );
+      }
+
+      if (this.shouldInterruptAutoSlide) {
+        this.destroyAutoSlide();
       }
     });
   }
@@ -171,6 +168,10 @@ export class Slider {
 
       bullet.addEventListener("click", () => {
         this.goToSlide(index);
+
+        if (this.shouldInterruptAutoSlide) {
+          this.destroyAutoSlide();
+        }
       });
 
       this.bulletsContainer.appendChild(bullet);
@@ -229,5 +230,9 @@ export class Slider {
         );
       }, this.autoSlideInterval);
     }
+  }
+
+  destroyAutoSlide() {
+    clearInterval(this.autoSlideIntervalId);
   }
 }
