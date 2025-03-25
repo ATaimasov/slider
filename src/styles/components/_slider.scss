@@ -72,7 +72,6 @@
     transition: opacity $animation-duration $animation;
   }
   .slider__slide--active {
-    height: auto;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
