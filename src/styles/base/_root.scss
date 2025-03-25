@@ -210,12 +210,3 @@
   //! delete or change
   // transition: fill $animation-duration $animation;
 }
-
-.icon__arrow-right {
-  width: 5px;
-  height: 5px;
-  border-left: 1.5px solid;
-  border-bottom: 1.5px solid;
-  transform: rotate(-135deg);
-  transition: transform $animation-duration $animation;
-}

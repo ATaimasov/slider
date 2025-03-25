@@ -1,5 +1,3 @@
-import { SLIDES } from "../data/SLIDES.js";
-
 export class Slider {
   constructor(options) {
     options = options || {};
@@ -16,7 +14,8 @@ export class Slider {
 
     // data
     this.currentSlideIndex = 0;
-    this.slidesData = SLIDES;
+    this.slidesData = options.slidesData || false;
+    this.slideTemplate = options.slideTemplate || false;
 
     this.additionalClass = options.additionalClass || "";
     this.autoSlideInterval = options.autoSlideInterval || 3000;
@@ -38,11 +37,19 @@ export class Slider {
   }
 
   init() {
+    this.checkData(this.slidesData);
+    this.checkData(this.slideTemplate);
     this.addSliderClass();
     this.addAdditionalClass();
     this.setMode();
     this.generateSlider();
     this.updateSliderAttribute();
+  }
+
+  checkData(data) {
+    if (!data) {
+      throw new Error("Не указаны данные для слайдера", data);
+    }
   }
 
   addSliderClass() {
@@ -73,17 +80,14 @@ export class Slider {
 
   generateSlides(SLIDES) {
     if (!SLIDES || !Array.isArray(SLIDES) || SLIDES.length === 0) {
-      console.warn("SLIDES не существует, не является массивом или пуст.");
+      console.warn(
+        "this.slidesData не существует, не является массивом или пуст.",
+      );
       return "";
     }
 
     return SLIDES.map((slide, index) => {
-      return `
-        <li class="slider__slide" data-slide-index=${index}>
-          <h2 class="slider__title">${slide.title}</h2>
-          <p class="slider__text">${slide.text}</p>
-        </li>
-      `;
+      return this.slideTemplate(slide, index);
     }).join("");
   }
 
