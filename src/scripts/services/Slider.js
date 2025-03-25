@@ -20,6 +20,7 @@ export class Slider {
 
     this.additionalClass = options.additionalClass || "";
     this.autoSlideInterval = options.autoSlideInterval || 3000;
+    this.mode = options.mode || "default";
 
     // booleans
     this.hasArrows = options.hasArrows !== undefined ? options.hasArrows : true;
@@ -39,7 +40,9 @@ export class Slider {
   init() {
     this.addSliderClass();
     this.addAdditionalClass();
+    this.setMode();
     this.generateSlider();
+    this.updateSliderAttribute();
   }
 
   addSliderClass() {
@@ -49,6 +52,10 @@ export class Slider {
   addAdditionalClass() {
     if (this.additionalClass === "") return;
     this.sliderContainer.classList.add(this.additionalClass);
+  }
+
+  setMode() {
+    this.sliderContainer.classList.add(`slider--mode-${this.mode}`);
   }
 
   generateSlider() {
@@ -182,13 +189,17 @@ export class Slider {
   }
 
   goToSlide(index) {
+    const prevSlide = this.currentSlideIndex;
     this.currentSlideIndex = index;
 
     this.slides.forEach((slide) => {
       slide.classList.remove("slider__slide--active");
+      slide.classList.remove("slider__slide--prev");
     });
     this.slides[this.currentSlideIndex].classList.add("slider__slide--active");
+    this.slides[prevSlide].classList.add("slider__slide--prev");
 
+    this.updateSliderAttribute();
     this.updateActiveBullet(index);
     this.updateArrows();
   }
@@ -213,6 +224,13 @@ export class Slider {
     this.rightArrow.classList.toggle(
       "slider__arrow--disabled",
       this.currentSlideIndex === this.slidesData.length - 1,
+    );
+  }
+
+  updateSliderAttribute() {
+    this.sliderContainer.setAttribute(
+      "data-active-slide",
+      this.currentSlideIndex,
     );
   }
 

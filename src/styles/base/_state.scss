@@ -1,21 +1,5 @@
 @use "../global" as *;
 
-.hidden {
-  display: none;
-}
-
-.fullscreen {
-  min-height: 100lvh;
-}
-
-.no-scroll {
-  overflow: hidden;
-}
-
-.no-wrap {
-  white-space: nowrap;
-}
-
 .smooth-mesh-background {
   position: relative;
 

@@ -228,11 +228,3 @@ html {
 *::after {
   box-sizing: inherit;
 }
-
-// need alternatives if you want to disable outline on focus
-// will work in contrast mode in any case
-// :focus,
-// a:active,
-// a:hover {
-//     outline: transparent;
-// }
